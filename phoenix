@@ -30,8 +30,6 @@ function org2ranges() {
 #cat up | while read dominio;do echo -ne "\n[$dominio]\n";wayback=$(curl -sf http://archive.org/wayback/available?url=$dominio | jq -r ".archived_snapshots.closest.url"); curl -sf $wayback | grep -Eo '(http|https)://[^/"].*js' | grep "$dominio" |sort -u;done
 #}
 
-#Recon Seguindo os Js grepeados
-
 function gau() {
   availableApis=$(curl -sf http://index.commoncrawl.org/collinfo.json | jq -r '.[] | .["cdx-api"]')
   echo $availableApis | sed 's# #\n#g' | while read apiAvailable; do
