@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Checar se tem
+# unfurl e jq instalado
+
+function wayback() {
+  curl -s "http://web.archive.org/cdx/search/cdx?url=*.$1/&output=txt&fl=original&collapse=urlkey" | grep -vi '.svg\|.png\|.img\|.ttf\|.eot\|.woff\|.ico\|.css\|.jpg\|.jpeg\|.pdf\|.doc' | unfurl domains | sort -u
+}
+
+function crt() {
+  curl -s "https://crt.sh/?q=$1&output=json" | jq -r '.[]["name_value"]' | sed 's#\*\.##g; s#www\.##g' | sort -u
+}
+
+function host2ip() {
+  ip=$(dig +short $1)
+}
+
+function ip2org() {
+  host2ip $1
+  org=$(curl -s https://api.iptoasn.com/v1/as/ip/$ip | jq -r ".as_description")
+}
+
+function org2ranges() {
+  ip2org $1
+  curl -s http://asnlookup.com/api/lookup?org=$org | jq -r ".[]"
+}
+
+# Recon Grepeando os JS da pagina
+#function spiderWaybackJs(){
+#cat up | while read dominio;do echo -ne "\n[$dominio]\n";wayback=$(curl -sf http://archive.org/wayback/available?url=$dominio | jq -r ".archived_snapshots.closest.url"); curl -sf $wayback | grep -Eo '(http|https)://[^/"].*js' | grep "$dominio" |sort -u;done
+#}
+
+#Recon Seguindo os Js grepeados
+
+function gau() {
+  availableApis=$(curl -sf http://index.commoncrawl.org/collinfo.json | jq -r '.[] | .["cdx-api"]')
+  echo $availableApis | sed 's# #\n#g' | while read apiAvailable; do
+    apiResult="$apiAvailable?url=*.$1"
+    totalPages=$(curl -sf "$apiResult&showNumPages=true" | jq -r ".pages")
+    for page in $(eval echo "{0..$totalPages}"); do
+      result=$(curl -sf "$apiResult&output=json&fl=url&page=$page" | jq -r ".url")
+      if [ -n "$result" ]; then
+        echo $result | sed 's# #\n#g'
+      fi
+    done
+  done
+}
+
+function abuseipdb() {
+  curl -s "https://www.abuseipdb.com/whois/$1" | grep "<li>.*</li>" | grep -v "=" | sed 's/<[^>]*>//g' | sed "s/$/\.$1/g"
+}
+
+#wayback $1
+#crt $1
+#abuseipdb $1
+gau $1
+#org2ranges $1
