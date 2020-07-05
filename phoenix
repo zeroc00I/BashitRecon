@@ -1,14 +1,21 @@
 #!/bin/bash
 
 # Checar se tem
-# unfurl e jq instalado
+# unfurl, jq, psql instalado
 
 function wayback() {
   curl -s "http://web.archive.org/cdx/search/cdx?url=*.$1/&output=txt&fl=original&collapse=urlkey" | grep -vi '.svg\|.png\|.img\|.ttf\|.eot\|.woff\|.ico\|.css\|.jpg\|.jpeg\|.pdf\|.doc' | unfurl domains | sort -u
 }
 
 function crt() {
-  curl -s "https://crt.sh/?q=$1&output=json" | jq -r '.[]["name_value"]' | sed 's#\*\.##g; s#www\.##g' | sort -u
+  # Old version =). Now we will gona use psql connection without limit
+  # curl -s "https://crt.sh/?q=$1&output=json" | jq -r '.[]["name_value"]' | sed 's#\*\.##g; s#www\.##g' | sort -u
+  if [ ! -f querycrt ];then
+    wget https://raw.githubusercontent.com/bminossi/BashitRecon/master/querycrt &>/dev/null
+  fi
+  query=`cat querycrt | sed "s#uber.com#$1#g" > tmpsql`
+  psql -f tmpsql -h crt.sh -p 5432 -U guest certwatch | grep "$1" | cut -d "|" -f3 | tr -d " \|+" | sort -u
+  rm tmpsql
 }
 
 function host2ip() {
@@ -49,7 +56,7 @@ function abuseipdb() {
 }
 
 #wayback $1
-#crt $1
+crt $1
 #abuseipdb $1
-gau $1
+#gau $1
 #org2ranges $1
