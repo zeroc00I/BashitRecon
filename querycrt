@@ -1,0 +1,31 @@
+WITH ci AS (
+    SELECT min(sub.CERTIFICATE_ID) ID,
+           min(sub.ISSUER_CA_ID) ISSUER_CA_ID,
+           array_agg(DISTINCT sub.NAME_VALUE) NAME_VALUES,
+           x509_subjectName(sub.CERTIFICATE) SUBJECT_NAME,
+           x509_notBefore(sub.CERTIFICATE) NOT_BEFORE,
+           x509_notAfter(sub.CERTIFICATE) NOT_AFTER
+        FROM (select *
+                  FROM certificate_and_identities cai
+                  WHERE plainto_tsquery('certwatch', '%uber.com%') @@ identities(cai.CERTIFICATE)
+                      AND cai.NAME_VALUE ILIKE ('%' || 'uber.com' || '%')
+		LIMIT 9000000
+             ) sub
+        GROUP BY sub.CERTIFICATE
+)
+SELECT ci.ISSUER_CA_ID,
+        ca.NAME ISSUER_NAME,
+        array_to_string(ci.NAME_VALUES, chr(10)) NAME_VALUE,
+        ci.ID ID,
+        le.ENTRY_TIMESTAMP,
+        ci.NOT_BEFORE,
+        ci.NOT_AFTER
+    FROM ci
+            LEFT JOIN LATERAL (
+                SELECT min(ctle.ENTRY_TIMESTAMP) ENTRY_TIMESTAMP
+                    FROM ct_log_entry ctle
+                    WHERE ctle.CERTIFICATE_ID = ci.ID
+            ) le ON TRUE,
+         ca
+    WHERE ci.ISSUER_CA_ID = ca.ID
+    ORDER BY le.ENTRY_TIMESTAMP DESC NULLS LAST;
