@@ -67,22 +67,45 @@ function threatcrowd() {
   curl -s "https://www.threatcrowd.org/searchApi/v2/domain/report/?domain=$1" | jq -r ".subdomains|.[]"
 }
 
-function hackertarget(){
+function hackertarget() {
   # You can replace f1 cut parameter to f2, and you will get all ips from api!
   curl -s "http://api.hackertarget.com/hostsearch/?q=$1" | sort -u | cut -d "," -f1
 }
 
-function dnsbufferover(){
+function dnsbufferover() {
   # You can replace f2 to f1 to get all ips too :)
   curl -s "http://dns.bufferover.run/dns?q=.$1" | jq -r ".FDNS_A|.[]" | cut -d "," -f2
 }
 
-wayback $1
-crt $1
-abuseipdb $1
-gau $1
-sublist3r $1
-threatcrowd $1
-hackertarget $1
-dnsbufferover $1
+function askengine() {
+  # Run it separately. It's a search engine tool, so it will be almost eternal =)
+  for page in {1..999}; do
+    curl -i -s "https://www.ask.com/web?q=site:$1%20-www.$1&o=0&l=dir&qo=pagination&page=$page" |
+      grep "PartialSearchResults.*$1" |
+      sed 's/<[^>]*>//g' |
+      unfurl domains
+  done
+}
+
+function rapiddns() {
+  # It could take a while ...
+  curl -s "https://rapiddns.io/subdomain/$1?full=1" |
+    grep "href.*$1" |
+     sed 's/<[^>]*>//g'
+}
+
+#wayback $1
+#crt $1
+#abuseipdb $1
+#sublist3r $1
+#threatcrowd $1
+#hackertarget $1
+#dnsbufferover $1
 #org2ranges $1
+
+# Slow tools
+rapiddns $1
+
+# Eternal Tools. Trust me.
+#gau $1
+#askengine $1
