@@ -60,12 +60,16 @@ function sublist3r() {
 }
 
 function threatcrowd() {
-  curl -s https://www.threatcrowd.org/searchApi/v2/domain/report/?domain=$1 | jq -r ".subdomains|.[]"
+  curl -s "https://www.threatcrowd.org/searchApi/v2/domain/report/?domain=$1" | jq -r ".subdomains|.[]"
 }
 
 function hackertarget(){
   # You can replace f1 cut parameter to f2, and you will get all ips from api!
-  curl -s http://api.hackertarget.com/hostsearch/?q=kinghost.net | sort -u | cut -d "," -f1
+  curl -s "http://api.hackertarget.com/hostsearch/?q=$1" | sort -u | cut -d "," -f1
+}
+function dnsbufferover(){
+  # You can replace f2 to f1 to get all ips too :)
+  curl -s "http://dns.bufferover.run/dns?q=.$1" | jq -r ".FDNS_A|.[]" | cut -d "," -f2
 }
 
 wayback $1
@@ -74,4 +78,6 @@ abuseipdb $1
 gau $1
 sublist3r $1
 threatcrowd $1
+hackertarget $1
+dnsbufferover $1
 #org2ranges $1
