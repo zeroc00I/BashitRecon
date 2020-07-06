@@ -58,8 +58,14 @@ function abuseipdb() {
 function sublist3r() {
   curl -s "https://api.sublist3r.com/search.php?domain=$1" | jq -r ".[]"
 }
+
 function threatcrowd() {
   curl -s https://www.threatcrowd.org/searchApi/v2/domain/report/?domain=$1 | jq -r ".subdomains|.[]"
+}
+
+function hackertarget(){
+  # You can replace f1 cut parameter to f2, and you will get all ips from api!
+  curl -s http://api.hackertarget.com/hostsearch/?q=kinghost.net | sort -u | cut -d "," -f1
 }
 
 wayback $1
