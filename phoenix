@@ -56,7 +56,7 @@ function abuseipdb() {
 }
 
 function sublist3r(){
-  curl -s https://api.sublist3r.com/search.php?domain=8x8.com | jq -r .[]
+  curl -s "https://api.sublist3r.com/search.php?domain=$1" | jq -r ".[]"
 }
 
 wayback $1
