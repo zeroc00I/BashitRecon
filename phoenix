@@ -45,7 +45,7 @@ function gau() {
     for page in $(eval echo "{0..$totalPages}"); do
       result=$(curl -sf "$apiResult&output=json&fl=url&page=$page" | jq -r ".url")
       if [ -n "$result" ]; then
-        echo $result | sed 's# #\n#g'
+        echo $result | sed 's# #\n#g' | unfurl domains | sort -u
       fi
     done
   done
@@ -55,8 +55,13 @@ function abuseipdb() {
   curl -s "https://www.abuseipdb.com/whois/$1" | grep "<li>.*</li>" | grep -v "=" | sed 's/<[^>]*>//g' | sed "s/$/\.$1/g"
 }
 
-#wayback $1
+function sublist3r(){
+  curl -s https://api.sublist3r.com/search.php?domain=8x8.com | jq -r .[]
+}
+
+wayback $1
 crt $1
-#abuseipdb $1
-#gau $1
+abuseipdb $1
+gau $1
+sublist3r $1
 #org2ranges $1
