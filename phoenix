@@ -10,10 +10,10 @@ function wayback() {
 function crt() {
   # Old version =). Now we will gona use psql connection without limit
   # curl -s "https://crt.sh/?q=$1&output=json" | jq -r '.[]["name_value"]' | sed 's#\*\.##g; s#www\.##g' | sort -u
-  if [ ! -f querycrt ];then
+  if [ ! -f querycrt ]; then
     wget https://raw.githubusercontent.com/bminossi/BashitRecon/master/querycrt &>/dev/null
   fi
-  query=`cat querycrt | sed "s#uber.com#$1#g" > tmpsql`
+  query=$(cat querycrt | sed "s#uber.com#$1#g" >tmpsql)
   psql -f tmpsql -h crt.sh -p 5432 -U guest certwatch | grep "$1" | cut -d "|" -f3 | tr -d " \|+" | sort -u
   rm tmpsql
 }
@@ -55,8 +55,11 @@ function abuseipdb() {
   curl -s "https://www.abuseipdb.com/whois/$1" | grep "<li>.*</li>" | grep -v "=" | sed 's/<[^>]*>//g' | sed "s/$/\.$1/g"
 }
 
-function sublist3r(){
+function sublist3r() {
   curl -s "https://api.sublist3r.com/search.php?domain=$1" | jq -r ".[]"
+}
+function threatcrowd() {
+  curl -s https://www.threatcrowd.org/searchApi/v2/domain/report/?domain=$1 | jq -r ".subdomains|.[]"
 }
 
 wayback $1
@@ -64,4 +67,5 @@ crt $1
 abuseipdb $1
 gau $1
 sublist3r $1
+threatcrowd $1
 #org2ranges $1
