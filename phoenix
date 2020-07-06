@@ -95,12 +95,12 @@ function rapiddns() {
 }
 
 #wayback $1
-#crt $1
-#abuseipdb $1
-#sublist3r $1
-#threatcrowd $1
-#hackertarget $1
-#dnsbufferover $1
+crt $1
+abuseipdb $1
+sublist3r $1
+threatcrowd $1
+hackertarget $1
+dnsbufferover $1
 #org2ranges $1
 
 # Slow tools
