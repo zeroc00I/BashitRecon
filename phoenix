@@ -34,7 +34,11 @@ function org2ranges() {
 
 # Recon Grepeando os JS da pagina
 #function spiderWaybackJs(){
-#cat up | while read dominio;do echo -ne "\n[$dominio]\n";wayback=$(curl -sf http://archive.org/wayback/available?url=$dominio | jq -r ".archived_snapshots.closest.url"); curl -sf $wayback | grep -Eo '(http|https)://[^/"].*js' | grep "$dominio" |sort -u;done
+#cat up | while read dominio;do
+# echo -ne "\n[$dominio]\n"
+# wayback=$(curl -sf http://archive.org/wayback/available?url=$dominio | jq -r ".archived_snapshots.closest.url")
+# curl -sf $wayback | grep -Eo '(http|https)://[^/"].*js' | grep "$dominio" |sort -u
+# done
 #}
 
 function gau() {
@@ -67,6 +71,7 @@ function hackertarget(){
   # You can replace f1 cut parameter to f2, and you will get all ips from api!
   curl -s "http://api.hackertarget.com/hostsearch/?q=$1" | sort -u | cut -d "," -f1
 }
+
 function dnsbufferover(){
   # You can replace f2 to f1 to get all ips too :)
   curl -s "http://dns.bufferover.run/dns?q=.$1" | jq -r ".FDNS_A|.[]" | cut -d "," -f2
