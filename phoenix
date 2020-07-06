@@ -2,6 +2,9 @@
 
 # Checar se tem
 # unfurl, jq, psql instalado
+# unfurl - https://github.com/tomnomnom/unfurl
+# jq - apt install jq
+# psql - apt install psql
 
 function wayback() {
   curl -s "http://web.archive.org/cdx/search/cdx?url=*.$1/&output=txt&fl=original&collapse=urlkey" | grep -vi '.svg\|.png\|.img\|.ttf\|.eot\|.woff\|.ico\|.css\|.jpg\|.jpeg\|.pdf\|.doc' | unfurl domains | sort -u
