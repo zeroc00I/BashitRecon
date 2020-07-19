@@ -18,8 +18,9 @@ xargs -P 100 -a hostUnicos -I@ sh -c 'sanssl @ 2>/dev/null | grep -v "No domains
 
 #Getting subdomains by all Dns records and brute subdomain
 
-~Command (Doest seems to be so useful)
+~Command
 dnsrecon -d alertmanager-1.staging.rtcdn.caffeine.tv -D /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt -t brt~
+(Doest seems to be so useful)
 
 ~Command
 altdns -t 600 -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt -i hostUnicos.txt -o hosts -r -s results_output.txt
