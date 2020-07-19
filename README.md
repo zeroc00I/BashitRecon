@@ -1,5 +1,9 @@
 # BashitRecon
 
+## Phoenix file
+
+Common passive ways to extract subdomains using a domain as input entrie.
+
 ## Filtering by up hosts
 
 xargs -P 500 -a lista -I@ sh -c 'dig @ | grep NOERROR 1>/dev/null && echo | echo @;'
