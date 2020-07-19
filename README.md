@@ -18,11 +18,11 @@ cat hostUnicos.txt | while read line;do xargs -P 500 -a ../../subbrute/names_sma
 
 ## Geting subdomains by ssl
 
-Source: https://raw.githubusercontent.com/appsecco/the-art-of-subdomain-enumeration/master/san_subdomain_enum.py
-
 ### Command
 
 xargs -P 100 -a hostUnicos -I@ sh -c 'sanssl @ 2>/dev/null | grep -v "No domains"'
+
+Source: https://raw.githubusercontent.com/appsecco/the-art-of-subdomain-enumeration/master/san_subdomain_enum.py
 
 ## Getting subdomains by all Dns records and brute subdomain
 
