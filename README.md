@@ -8,6 +8,8 @@ Common passive ways to extract subdomains using a domain as input entrie.
 
 xargs -P 500 -a lista -I@ sh -c 'dig @ | grep NOERROR 1>/dev/null && echo | echo @;'
 
+xargs -P 500 -a lista -I@ sh -c 'nc -z -v host 80 2>/dev/null && echo @'
+
 ## Geting domains using reverse DNS
 
 ### Command
