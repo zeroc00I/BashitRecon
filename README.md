@@ -10,6 +10,14 @@ xargs -P 500 -a lista -I@ sh -c 'dig @ | grep NOERROR 1>/dev/null && echo | echo
 
 xargs -P 500 -a lista -I@ sh -c 'nc -w1 -z -v @ 80 2>/dev/null && echo @'
 
+## Extract Only Http using gospider (required anew instalation)
+
+xargs -P 500 -a hosts -I@ sh -c 'nc -w1 -z -v @ 443 2>/dev/null && echo @' | xargs -I@ -P10 sh -c 'gospider -a -s "https://@" -d 2 | grep -Eo "(http|https)://[^/\"]+" | anew'
+
+## Extract only JS using gospider (required anew instalation)
+
+xargs -P 500 -a hosts -I@ sh -c 'nc -w1 -z -v @ 8443 2>/dev/null && echo @' | xargs -I@ -P10 sh -c 'gospider -a -s "https://@" -d 2 | grep -Eo "(http|https)://[^/\"].*.js+" | sed "s#\] \- #\n#g" | anew'
+
 ## Geting domains using reverse DNS
 
 ### Command
