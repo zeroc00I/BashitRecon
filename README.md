@@ -18,6 +18,9 @@ xargs -P 500 -a hosts -I@ sh -c 'nc -w1 -z -v @ 443 2>/dev/null && echo @' | xar
 
 xargs -P 500 -a hosts -I@ sh -c 'nc -w1 -z -v @ 8443 2>/dev/null && echo @' | xargs -I@ -P10 sh -c 'gospider -a -s "https://@" -d 2 | grep -Eo "(http|https)://[^/\"].*.js+" | sed "s#\] \- #\n#g" | anew'
 
+## Extract only using openssl (required anew installation)
+xargs -P100 -a hosts -I@ sh -c 'ip=$(dig +short @);[ ! -z "$ip" ] && printf "GET / HTTP/1.1\r\nHost: $ip\r\n\r\n" | timeout 2 openssl s_client -connect $ip:443 2>/dev/null' | sed 's# \|/\|=#\n#g' | grep paypal | anew
+
 ## Geting domains using reverse DNS
 
 ### Command
