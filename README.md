@@ -4,6 +4,10 @@
 
 Common passive ways to extract subdomains using a domain as input entrie.
 
+## Filtering by just internal IPs
+
+xargs -a hostsNubank -I@ sh -c 'ip=$(dig +short @); [ -z "${ip##*10.*}" ] && echo @'
+
 ## Filtering by up hosts
 
 xargs -P 500 -a lista -I@ sh -c 'dig @ | grep -q NOERROR 1>/dev/null && echo | echo @;'
