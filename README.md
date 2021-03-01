@@ -5,7 +5,7 @@
 Common passive ways to extract subdomains using a domain as input entrie.
 
 ## CIDR to ip range with ipcalc
-
+```
 prips() {
   local cidr=$1 ; local lo hi a b c d e f g h
 
@@ -18,7 +18,7 @@ prips() {
 
   eval "echo {$a..$e}.{$b..$f}.{$c..$g}.{$d..$h}"
 }
-
+```
 ## Filtering by just internal IPs
 
 xargs -a hostslist -I@ sh -c 'ip=$(dig +short @); [ -z "${ip##*10.*}" ] && echo @'
